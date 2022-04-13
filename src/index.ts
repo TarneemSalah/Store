@@ -2,6 +2,8 @@ import express, { Application ,Request,Response} from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { rateLimit } from 'express-rate-limit';
+import errormiddleware from './middleware/error.middleware';
+
 const PORT =4000;
 
 const app:Application = express();
@@ -18,12 +20,27 @@ app.use(rateLimit({
 })
 );
 
+app.use((_req:Request, res:Response)=>{
+res.status(404).json({
+    message: 'read the api doc to find ur way',
+});
+}
+);
+
+app.use(errormiddleware);
 
 app.get('/',(_req: Request,res: Response)=> {
- res.json({
-     message:'hello',
+    throw new Error('Error'),
+    res.json({
+      message:'hello',
  });
 });
+app.post('/',(req: Request,res: Response)=> {
+    res.json({
+        message:'hello from post',
+        data: req.body,
+    });
+   });
 
 
 app.listen(PORT, () => console.log(`server is starting at port:${PORT}`));
