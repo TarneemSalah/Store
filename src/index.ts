@@ -3,8 +3,12 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { rateLimit } from 'express-rate-limit';
 import errormiddleware from './middleware/error.middleware';
+import config from "./config"
+import db from './database';
+console.log(config);
 
-const PORT =4000;
+
+const PORT =config.port || 4000;
 
 const app:Application = express();
  
@@ -42,6 +46,23 @@ app.post('/',(req: Request,res: Response)=> {
     });
    });
 
+
+
+
+   //test db
+db. connect (). then((client) => {
+return client
+  .query ('SELECT NOw()')
+  .then((res) => {
+client. release();
+console. log(res.rows);
+  })
+.catch((err) => {
+  client. release();
+  console. log(err. stack);
+
+});
+});
 
 app.listen(PORT, () => console.log(`server is starting at port:${PORT}`));
 export default app;
